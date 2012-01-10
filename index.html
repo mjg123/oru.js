@@ -1,0 +1,58 @@
+<html>
+
+  <head>
+    <title>ORU.js</title>
+    <style type="text/css">
+      textarea {width: 90%; display: block; height: 200px;}
+      #orimashita { margin: 8px; font-size: 75%; }
+
+      /* all parts */
+      .oru { display: inline-block; 
+             vertical-align: top; 
+             padding-left: 4px;
+             padding-right: 4px;
+             font-family: courier;
+             padding-bottom: 0px;
+      }
+
+      .jsonprop { margin-left: 16px; }
+
+      .quote { color: #888; }
+      .key { font-weight: bold; }
+      .string { color: #008; }
+      .number { color: #080; }
+      .boolean { color: #800; }
+      .null { font-style: italic }
+
+    </style>
+  </head>
+
+  <body>
+
+    <h1>ORU.js</h1>
+
+    <textarea id="demo-json">
+{
+  "key": "value",
+  "foo": 123,
+  "key2": [ "an", "array", null ],
+  "gupd": { "type": "awesome", "occupants": ["kwaazi","peso"], "breath": [true, false] } 
+}
+    </textarea>
+
+    <input type="button" id="orinasai" value="orinasai"/>
+
+    <div id="orimashita"></div>
+
+    <script type="text/javascript" src="oru.js"></script>
+    <script type="text/javascript">
+      document.getElementById('orinasai').onclick = function(e) {
+        var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
+            res = document.getElementById('orimashita');
+        res.innerHTML = "";
+        res.appendChild(newDiv);
+      };
+    </script>
+  </body>
+
+</html>
