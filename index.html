@@ -47,10 +47,15 @@
     <script type="text/javascript" src="oru.js"></script>
     <script type="text/javascript">
       document.getElementById('orinasai').onclick = function(e) {
-        var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
-            res = document.getElementById('orimashita');
-        res.innerHTML = "";
-        res.appendChild(newDiv);
+        try{
+            var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
+                res = document.getElementById('orimashita');
+            res.innerHTML = ""; 
+            res.appendChild(newDiv);
+        } catch (err) {
+            console.log(err);
+            alert("error ;(");
+        }
       };
     </script>
   </body>
