@@ -12,7 +12,7 @@ var ORU = (function () {
 	d.className = classname;
 	return d;
     },
-    typeOf = function (value) {
+    typeOf = function (value) { // thanks, crockford
 	var s = typeof value;
 	if (s === 'object') {
             if (value) {
@@ -75,21 +75,22 @@ var ORU = (function () {
 
 	if ( typeOf(json) === 'array' ){
 	    newDiv.appendChild( text("[") );
-	    for ( o in json ){
-		if ( json.hasOwnProperty(o) ){
-		    propDiv = el('jsonprop');
-		    
-		    valDiv = oru.create( json[o] );
-		    propDiv.appendChild(valDiv);
-		    newDiv.appendChild(propDiv);
+	    for ( o=0; o<json.length; o+=1 ){
+		propDiv = el('jsonprop');
+		
+		valDiv = oru.create( json[o] );
+		propDiv.appendChild(valDiv);
+		if ( o < json.length-1 ){
+		    propDiv.appendChild(text(","));
 		}
+		newDiv.appendChild(propDiv);
 	    }
 	    newDiv.appendChild( text("]") );
 	    return newDiv;
 	}
 
 	if ( typeOf(json) === 'object' ){
-	    newDiv.appendChild( text("{", "start") );
+	    newDiv.appendChild( text("{") );
 	    for ( o in json ){
 		if ( json.hasOwnProperty(o) ){
 		    propDiv = el('jsonprop');
@@ -97,7 +98,7 @@ var ORU = (function () {
 		    keyDiv.appendChild(quoted(o));
 		    
 		    valDiv = oru.create( json[o] );
-		    
+
 		    propDiv.appendChild(keyDiv);
 		    propDiv.appendChild(text(":"));
 		    propDiv.appendChild(valDiv);
@@ -108,7 +109,6 @@ var ORU = (function () {
 	    newDiv.appendChild( text("}") );
 	    return newDiv;
 	}
-
 
     };
 
