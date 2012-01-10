@@ -12,6 +12,15 @@ var ORU = (function () {
 	d.className = classname;
 	return d;
     },
+    countProps = function(o){
+	var p,c=0;
+	for (p in o){
+	    if (o.hasOwnProperty(p)){
+		c++;
+	    }
+	}
+	return c;
+    },
     typeOf = function (value) { // thanks, crockford
 	var s = typeof value;
 	if (s === 'object') {
@@ -90,6 +99,10 @@ var ORU = (function () {
 	}
 
 	if ( typeOf(json) === 'object' ){
+
+	    t = countProps(json);
+	    c = 0;
+
 	    newDiv.appendChild( text("{") );
 	    for ( o in json ){
 		if ( json.hasOwnProperty(o) ){
@@ -102,6 +115,11 @@ var ORU = (function () {
 		    propDiv.appendChild(keyDiv);
 		    propDiv.appendChild(text(":"));
 		    propDiv.appendChild(valDiv);
+
+		    if ( c < t-1 ){
+			valDiv.appendChild(text(","));
+		    }
+		    c++;
 
 		    newDiv.appendChild(propDiv);
 		}
