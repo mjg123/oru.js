@@ -4,25 +4,26 @@
     <title>ORU.js</title>
     <style type="text/css">
       textarea {width: 90%; display: block; height: 200px;}
-      #orimashita { margin: 8px; font-size: 75%; }
+      #orimashita { margin: 8px; font-family: courier; }
 
-      /* all parts */
-      .oru { display: inline-block; 
-             vertical-align: top; 
-             padding-left: 4px;
-             padding-right: 4px;
-             font-family: courier;
-             padding-bottom: 0px;
-      }
+      .oru-property { display: block; }
+      .oru-key { display: inline-block; margin-right: 8px; }
+      .oru-value { display: inline; }
+      .oru-bracket-content { padding-left: 24px; }
 
-      .jsonprop { margin-left: 16px; }
+      .oru-key-text { font-weight: bold; }
+      .oru-key-quote { color: #888; }
+      .oru-key-colon { color: #444; }
 
-      .quote { color: #888; }
-      .key { font-weight: bold; }
-      .string { color: #008; }
-      .number { color: #080; }
-      .boolean { color: #800; }
-      .null { font-style: italic }
+      .oru-bracket { color: #444; }
+      .oru-comma { color: #444; }
+
+      .oru-value-string  { color: #008; }
+      .oru-value-number  { color: #080; }
+      .oru-value-boolean { color: #800; }
+      .oru-value-null    { font-style: italic; }
+
+      .lineham { display: block; }
 
     </style>
   </head>

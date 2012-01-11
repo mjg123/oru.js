@@ -1,133 +1,136 @@
 /*jslint white: false*/
 /*global document*/
 
-var ORU = (function () {
+var ORU = (function(){
 
-    var oru = {},
-    text = function(txt) {
-	return document.createTextNode(txt);
-    },
-    el = function(classname){
-	var d = document.createElement("div");
-	d.className = classname;
-	return d;
-    },
-    countProps = function(o){
-	var p,c=0;
-	for (p in o){
-	    if (o.hasOwnProperty(p)){
-		c++;
-	    }
-	}
-	return c;
-    },
-    typeOf = function (value) { // thanks, crockford
-	var s = typeof value;
-	if (s === 'object') {
+    var oru={}, generators={},
+
+    typeOf = function( value ){ // Thanks, Crockford!
+        var s = typeof value;
+        if (s === 'object') {
             if (value) {
-		if (typeof value.length === 'number' &&
+                if (typeof value.length === 'number' &&
                     !(value.propertyIsEnumerable('length')) &&
                     typeof value.splice === 'function') {
                     s = 'array';
-		}
+                }
             } else {
-		s = 'null';
+                s = 'null';
             }
-	}
-	return s;
+        }
+        return s;
     },
-    quoted = function (content) {
-	var span = document.createElement('span'),
-	q1 = document.createElement('span'),
-	q2 = document.createElement('span'),
-	t = text(content);
 
-	q1.innerHTML = '"';
-	q1.className = 'quote';
-	q2.innerHTML = '"';
-	q2.className = 'quote';
+    el = function( type, className, content ){
+	var e = document.createElement(type);
+	content = content || "";
+	e.className = className;
+	e.innerHTML = content;
+	return e;
+    },
 
-	span.appendChild(q1);
-	span.appendChild(t);
-	span.appendChild(q2);
+    quotedKey = function( key ){
+	var keyDiv = el( 'div', 'oru-key' );
 
+	keyDiv.appendChild( el('span', 'oru-key-quote', '"') );
+	keyDiv.appendChild( el('span', 'oru-key-text', key) );
+	keyDiv.appendChild( el('span', 'oru-key-quote', '"') );
+	keyDiv.appendChild( el('span', 'oru-key-colon', ':') );
+
+	return keyDiv;
+    },
+
+    countProps = function( obj ){
+	var i=0, p;
+	for ( p in obj ){
+	    if ( obj.hasOwnProperty(p) ){
+		i += 1;
+	    }
+	}
+	return i;
+    };
+
+    generators.string = function( txt ){
+	var span = el('span', 'oru-value-string');
+	span.innerHTML = '"' + txt + '"';
 	return span;
     };
 
-    oru.create = function (json) {
+    generators.number = function( num ){
+	var span = el('span', 'oru-value-number');
+	span.innerHTML = num;
+	return span;
+    };
 
-	var o, propDiv, keyDiv, valDiv, fooDiv, newDiv = el('jsondiv oru');
+    generators.boolean = function( b ){
+	var span = el('span', 'oru-value-boolean');
+	span.innerHTML = b;
+	return span;
+    };
 
-	if ( typeOf(json) === 'string' ) {
-	    valDiv = el('jsonval string oru');
-	    valDiv.innerHTML = '"' + json + '"';
-	    return valDiv;
+    generators["null"] = function(){
+	var span = el('span', 'oru-value-null');
+	span.innerHTML = "null";
+	return span;
+    };
+
+    generators.array = function( arr ){
+	var i, contentLine,
+	valDiv = el('div', 'oru-value'),
+	content = el('div', 'oru-bracket-content');
+
+	for (i=0; i<arr.length; i+=1){
+	    contentLine = oru.create(arr[i]);
+	    contentLine.className += " oru-property";
+	    if ( i<arr.length-1 ){
+		contentLine.appendChild( el('span', 'oru-comma', ',') );
+	    }
+	    content.appendChild( contentLine );
 	}
-
-	if ( typeOf(json) === 'number' ) {
-	    valDiv = el('jsonval number oru');
-	    valDiv.innerHTML = json;
-	    return valDiv;
-	}
-
-	if ( typeOf(json) === 'null' ) {
-	    valDiv = el('jsonval null oru');
-	    valDiv.innerHTML = "null";
-	    return valDiv;
-	}
-
-	if ( typeOf(json) === 'boolean' ) {
-	    valDiv = el('jsonval boolean oru');
-	    valDiv.innerHTML = json;
-	    return valDiv;
-	}
-
-	if ( typeOf(json) === 'array' ){
-	    newDiv.appendChild( text("[") );
-	    for ( o=0; o<json.length; o+=1 ){
-		propDiv = el('jsonprop');
 		
-		valDiv = oru.create( json[o] );
-		propDiv.appendChild(valDiv);
-		if ( o < json.length-1 ){
-		    propDiv.appendChild(text(","));
+	valDiv.appendChild( el('span', 'oru-bracket', '[') );
+	valDiv.appendChild(content);
+	valDiv.appendChild( el('span', 'oru-bracket', ']') );
+
+	return valDiv;
+    };
+
+    generators.object = function( obj ){
+	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0,
+	propCount = countProps( obj ),
+	valDiv = el('div', 'oru-value'),
+	content = el('div', 'oru-bracket-content');
+
+	for ( p in obj ){
+	    if ( obj.hasOwnProperty(p) ){
+		mapKeyDiv = quotedKey(p);
+		mapValDiv = el('div', 'oru-value');
+		mapValDiv.appendChild(oru.create(obj[p]));
+		
+		mapPropDiv = el('div', 'oru-property');
+		mapPropDiv.appendChild(mapKeyDiv);
+		mapPropDiv.appendChild(mapValDiv);
+		if ( i<propCount-1 ){
+		    mapPropDiv.appendChild( el('span', 'oru-comma', ',') );
+		    i += 1;
 		}
-		newDiv.appendChild(propDiv);
+		content.appendChild(mapPropDiv);
 	    }
-	    newDiv.appendChild( text("]") );
-	    return newDiv;
 	}
 
-	if ( typeOf(json) === 'object' ){
+	valDiv.appendChild( el('span', 'oru-bracket', '{') );
+	valDiv.appendChild(content);
+	valDiv.appendChild( el('span', 'oru-bracket', '}') );
 
-	    t = countProps(json);
-	    c = 0;
+	return valDiv;
+    };
 
-	    newDiv.appendChild( text("{") );
-	    for ( o in json ){
-		if ( json.hasOwnProperty(o) ){
-		    propDiv = el('jsonprop');
-		    keyDiv = el('jsonkey key oru');
-		    keyDiv.appendChild(quoted(o));
-		    
-		    valDiv = oru.create( json[o] );
-
-		    propDiv.appendChild(keyDiv);
-		    propDiv.appendChild(text(":"));
-		    propDiv.appendChild(valDiv);
-
-		    if ( c < t-1 ){
-			valDiv.appendChild(text(","));
-		    }
-		    c++;
-
-		    newDiv.appendChild(propDiv);
-		}
-	    }
-	    newDiv.appendChild( text("}") );
-	    return newDiv;
+    oru.create = function( obj ){
+	var type = typeOf(obj);
+	if ( generators[type] ){
+	    return generators[type]( obj );
 	}
-
+	throw "No Generator for type " + type;
     };
 
     return oru;
