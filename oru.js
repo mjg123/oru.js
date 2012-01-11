@@ -48,6 +48,11 @@ var ORU = (function(){
 	    }
 	}
 	return i;
+    },
+
+    addDimmer = function( src, dst ){
+	src.onmouseover = function(){ dst.classList.add( 'oru-highlight' ) };
+	src.onmouseout  = function(){ dst.classList.remove( 'oru-highlight' ) };
     };
 
     generators.string = function( txt ){
@@ -81,7 +86,7 @@ var ORU = (function(){
     };
 
     generators.array = function( arr ){
-	var i, contentLine,
+	var i, contentLine, bracketS, bracketE,
 	valDiv = el('div', 'oru-value'),
 	content = el('div', 'oru-bracket-content');
 
@@ -93,16 +98,22 @@ var ORU = (function(){
 	    }
 	    content.appendChild( contentLine );
 	}
-		
-	valDiv.appendChild( el('span', 'oru-bracket', '[') );
-	valDiv.appendChild(content);
-	valDiv.appendChild( el('span', 'oru-bracket', ']') );
 
+	bracketS = el('span', 'oru-bracket', '[');
+	bracketE = el('span', 'oru-bracket', ']');
+
+	valDiv.appendChild( bracketS );
+	valDiv.appendChild(content);
+	valDiv.appendChild( bracketE );
+
+	addDimmer(bracketS, content);
+	addDimmer(bracketE, content);
 	return valDiv;
     };
 
     generators.object = function( obj ){
 	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0,
+	bracketS, bracketE,
 	propCount = countProps( obj ),
 	valDiv = el('div', 'oru-value'),
 	content = el('div', 'oru-bracket-content');
@@ -116,6 +127,9 @@ var ORU = (function(){
 		mapPropDiv = el('div', 'oru-property');
 		mapPropDiv.appendChild(mapKeyDiv);
 		mapPropDiv.appendChild(mapValDiv);
+		
+		addDimmer( mapKeyDiv, mapPropDiv );
+
 		if ( i<propCount-1 ){
 		    mapPropDiv.appendChild( el('span', 'oru-comma', ',') );
 		    i += 1;
@@ -124,9 +138,15 @@ var ORU = (function(){
 	    }
 	}
 
-	valDiv.appendChild( el('span', 'oru-bracket', '{') );
+	bracketS = el('span', 'oru-bracket', '{');
+	bracketE = el('span', 'oru-bracket', '}');
+
+	valDiv.appendChild( bracketS );
 	valDiv.appendChild(content);
-	valDiv.appendChild( el('span', 'oru-bracket', '}') );
+	valDiv.appendChild( bracketE );
+
+	addDimmer(bracketS, content);
+	addDimmer(bracketE, content);
 
 	return valDiv;
     };
