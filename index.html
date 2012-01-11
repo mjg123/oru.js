@@ -11,8 +11,7 @@
                   display: inline-block; }
 
       .orimashita { margin: 8px;
-                    font-family: courier;
-                    width: 45%; }
+                    font-family: courier; }
 
       #json-path-input { width: 75%; border: 1px solid teal; }
       #json-path-go { width: 20%; }
@@ -53,18 +52,19 @@
     </textarea>
 
     <div class="show-off">
-      <h2>ORU</h2>
-      <p>ORU is a JavaScript library for prettily printing JSON objects as HTML.
+      <h2>ORU.js</h2>
+      <p>ORU.js is a JavaScript library for prettily printing JSON objects as HTML.
 	<br/><a href="http://github.com/mjg123/oru.js">How can I use this awesome?</a></p>
       <p>Edit the JSON above, then: <input type="button" id="orinasai" value="regenerate"/></p>
 
       <div id="orimashita" class="orimashita"></div>
+      <p>BTW, "oru" is Japanese for "folding"</p>
     </div>
 
     <div id="json-path" class="show-off">
       <h2>JSONPath demo</h2>
       <p>JSONPath is to JSON what Xpath is to XML.  "A tool for picking parts out of a JSON structure".</p>
-      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library to demo one possible use for ORU.</p>
+      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library to demo one possible use for ORU.js.</p>
       <input id="json-path-input" value="$.gupd.occupants"/>
       <input type="button" id="json-path-go" value="json path"/>
       <div id="json-path-result" class="orimashita"></div>
