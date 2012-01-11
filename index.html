@@ -3,8 +3,19 @@
   <head>
     <title>ORU.js</title>
     <style type="text/css">
-      textarea {width: 90%; display: block; height: 200px;}
-      #orimashita { margin: 8px; font-family: courier; }
+      textarea { width: 90%; margin-left: 32px; display: block; height: 100px; border: none;}
+      .show-off { margin: 8px; 
+                  width: 45%; 
+                  overflow: auto; 
+                  vertical-align: top;
+                  display: inline-block; }
+
+      .orimashita { margin: 8px;
+                    font-family: courier;
+                    width: 45%; }
+
+      #json-path-input { width: 75%; border: 1px solid teal; }
+      #json-path-go { width: 20%; }
 
       .oru-property { display: block; }
       .oru-key { display: inline-block; margin-right: 8px; }
@@ -18,12 +29,11 @@
       .oru-bracket { color: #444; }
       .oru-comma { color: #444; }
 
-      .oru-value-string  { color: #008; }
-      .oru-value-number  { color: #080; }
-      .oru-value-boolean { color: #800; }
-      .oru-value-null    { font-style: italic; }
-
-      .lineham { display: block; }
+      .oru-value-string    { color: #008; }
+      .oru-value-number    { color: #080; }
+      .oru-value-boolean   { color: #800; }
+      .oru-value-null      { font-style: italic; }
+      .oru-value-undefined { font-style: italic; }
 
     </style>
   </head>
@@ -32,22 +42,37 @@
 
     <h1>ORU.js</h1>
 
+    First, some JSON:
+
     <textarea id="demo-json">
+
 {
-  "key": "value",
-  "foo": 123,
-  "key2": [ "an", "array", null ],
+  "key": "value", "foo": 123, "key2": [ "an", "array", null ],
   "gupd": { "type": "awesome", "occupants": ["kwaazi","peso"], "breath": [true, false] } 
 }
     </textarea>
 
-    <input type="button" id="orinasai" value="orinasai"/>
+    <div class="show-off">
+      <h2>ORU</h2>
+      <p>ORU is a JavaScript library for prettily printing JSON objects as HTML.</p>
+      <p>Edit the JSON above, then: <input type="button" id="orinasai" value="regenerate"/></p>
 
-    <div id="orimashita"></div>
+      <div id="orimashita" class="orimashita"></div>
+    </div>
+
+    <div id="json-path" class="show-off">
+      <h2>JSONPath demo</h2>
+      <p>JSONPath is to JSON what Xpath is to XML.  "A tool for picking parts out of a JSON structure".</p>
+      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library to demo one possible use for ORU.</p>
+      <input id="json-path-input" value="$.gupd.occupants"/>
+      <input type="button" id="json-path-go" value="json path"/>
+      <div id="json-path-result" class="orimashita"></div>
+    </div>
 
     <script type="text/javascript" src="oru.js"></script>
+    <script type="text/javascript" src="http://jsonpath.googlecode.com/svn/tags/jsonpath-cs-0.5.1/src/js/jsonpath.js"></script>
     <script type="text/javascript">
-      document.getElementById('orinasai').onclick = function(e) {
+      var doOru = function(){
         try{
             var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
                 res = document.getElementById('orimashita');
@@ -58,6 +83,17 @@
             alert("error ;(");
         }
       };
+
+      document.getElementById('orinasai').onclick = doOru;
+
+      document.getElementById('json-path-go').onclick = function(e) {
+          var res = document.getElementById('json-path-result');
+          res.innerHTML = "";
+          res.appendChild( ORU.create( jsonPath( JSON.parse(document.getElementById("demo-json").value),                                                              document.getElementById('json-path-input').value)));
+
+      };
+
+      doOru();
     </script>
   </body>
 

@@ -74,6 +74,12 @@ var ORU = (function(){
 	return span;
     };
 
+    generators["undefined"] = function(){
+	var span = el('span', 'oru-value-undefined');
+	span.innerHTML = "undefined";
+	return span;
+    };
+
     generators.array = function( arr ){
 	var i, contentLine,
 	valDiv = el('div', 'oru-value'),
