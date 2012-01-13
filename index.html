@@ -3,7 +3,10 @@
   <head>
     <title>ORU.js</title>
     <style type="text/css">
-      textarea { width: 90%; margin-left: 32px; display: block; height: 100px; border: none;}
+      textarea { width: 90%; margin-left: 32px; display: block; height: 100px; border: 1px solid #CCC;}
+
+      .jsonp-input { border: 1px solid #CCC; }
+
       .show-off { margin: 8px; 
                   width: 45%; 
                   overflow: auto; 
@@ -12,6 +15,8 @@
 
       .orimashita { margin: 8px;
                     font-family: courier; }
+
+      #jsonp-url { width: 50%; }
 
       #json-path-input { width: 75%; border: 1px solid teal; }
       #json-path-go { width: 20%; }
@@ -43,15 +48,22 @@
 
     <h1>ORU.js</h1>
 
-    First, some JSON:
+    <p>
+    First, type some JSON or fetch from URL
+    <input id="jsonp-url" class="jsonp-input" value="http://api.stackoverflow.com/1.0/users/268619/?jsonp=oru_cb"/>
+    using jsonp.
+    <input type="button" id="jsonp-fetch" value="fetch"/>
+    </p>
 
     <textarea id="demo-json">
-
 {
   "key": "value", "foo": 123, "key2": [ "an", "array", null ],
   "gupd": { "type": "awesome", "occupants": ["kwaazi","peso"], "breath": [true, false] } 
 }
     </textarea>
+    
+
+    <br/>
 
     <div class="show-off">
       <h2>ORU.js</h2>
@@ -75,6 +87,17 @@
     <script type="text/javascript" src="oru.js"></script>
     <script type="text/javascript" src="http://jsonpath.googlecode.com/svn/tags/jsonpath-cs-0.5.1/src/js/jsonpath.js"></script>
     <script type="text/javascript">
+      var fetchJson = function(){
+        var s = document.createElement("script");
+	s.src = document.getElementById("jsonp-url").value;
+	document.getElementsByTagName('head')[0].appendChild(s);
+      }
+
+      var oru_cb = function(data){
+	document.getElementById('demo-json').value = JSON.stringify( data );
+        doOru();
+      }
+
       var doOru = function(){
         try{
             var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
@@ -87,6 +110,7 @@
         }
       };
 
+      document.getElementById('jsonp-fetch').onclick = fetchJson;
       document.getElementById('orinasai').onclick = doOru;
 
       document.getElementById('json-path-go').onclick = function(e) {
