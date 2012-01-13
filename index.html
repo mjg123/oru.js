@@ -3,7 +3,11 @@
   <head>
     <title>ORU.js</title>
     <style type="text/css">
-      textarea { width: 90%; margin-left: 32px; display: block; height: 100px; border: none;}
+      textarea { width: 90%; display: block; height: 100px; border: 1px solid #CCC;}
+      .indent { margin-left: 32px; }
+
+      .jsonp-input { border: 1px solid #CCC; }
+
       .show-off { margin: 8px; 
                   width: 45%; 
                   overflow: auto; 
@@ -11,7 +15,12 @@
                   display: inline-block; }
 
       .orimashita { margin: 8px;
-                    font-family: courier; }
+                    font-family: courier;
+                    font-size: 0.85em;
+                    height: 400px;
+                    overflow: auto; }
+
+      #jsonp-url { width: 50%; }
 
       #json-path-input { width: 75%; border: 1px solid teal; }
       #json-path-go { width: 20%; }
@@ -43,15 +52,22 @@
 
     <h1>ORU.js</h1>
 
-    First, some JSON:
+    <p class="indent">
+    First, type some JSON or fetch from URL
+    <input id="jsonp-url" class="jsonp-input" value="http://api.stackoverflow.com/1.0/users/268619/?jsonp=oru_cb"/>
+    using jsonp.
+    <input type="button" id="jsonp-fetch" value="fetch"/>
+    </p>
 
-    <textarea id="demo-json">
-
+    <textarea id="demo-json" class="indent">
 {
   "key": "value", "foo": 123, "key2": [ "an", "array", null ],
   "gupd": { "type": "awesome", "occupants": ["kwaazi","peso"], "breath": [true, false] } 
 }
     </textarea>
+    
+
+    <br/>
 
     <div class="show-off">
       <h2>ORU.js</h2>
@@ -64,10 +80,9 @@
     </div>
 
     <div id="json-path" class="show-off">
-      <h2>JSONPath demo</h2>
-      <p>JSONPath is to JSON what Xpath is to XML.  "A tool for picking parts out of a JSON structure".</p>
-      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page uses Goessner's library to demo one possible use for ORU.js.</p>
-      <input id="json-path-input" value="$.gupd.occupants[?(@.length>4)]"/>
+      <h2>JSONPath</h2>
+      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library.</p>
+      <input id="json-path-input" value="$.gupd.occupants"/>
       <input type="button" id="json-path-go" value="json path"/>
       <div id="json-path-result" class="orimashita"></div>
     </div>
@@ -75,6 +90,17 @@
     <script type="text/javascript" src="oru.js"></script>
     <script type="text/javascript" src="http://jsonpath.googlecode.com/svn/tags/jsonpath-cs-0.5.1/src/js/jsonpath.js"></script>
     <script type="text/javascript">
+      var fetchJson = function(){
+        var s = document.createElement("script");
+	s.src = document.getElementById("jsonp-url").value;
+	document.getElementsByTagName('head')[0].appendChild(s);
+      }
+
+      var oru_cb = function(data){
+	document.getElementById('demo-json').value = JSON.stringify( data );
+        doOru();
+      }
+
       var doOru = function(){
         try{
             var newDiv = ORU.create( JSON.parse(document.getElementById("demo-json").value) ),
@@ -85,16 +111,18 @@
             console.log(err);
             alert("error ;(");
         }
+        doJsonPath();
       };
 
-      document.getElementById('orinasai').onclick = doOru;
-
-      document.getElementById('json-path-go').onclick = function(e) {
+      var doJsonPath = function(){
           var res = document.getElementById('json-path-result');
           res.innerHTML = "";
           res.appendChild( ORU.create( jsonPath( JSON.parse(document.getElementById("demo-json").value),                                                              document.getElementById('json-path-input').value)));
-
       };
+
+      document.getElementById('jsonp-fetch').onclick = fetchJson;
+      document.getElementById('orinasai').onclick = doOru;
+      document.getElementById('json-path-go').onclick = doJsonPath;
 
       doOru();
     </script>
