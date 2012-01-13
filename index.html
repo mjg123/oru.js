@@ -14,7 +14,10 @@
                   display: inline-block; }
 
       .orimashita { margin: 8px;
-                    font-family: courier; }
+                    font-family: courier;
+                    font-size: 0.85em;
+                    height: 400px;
+                    overflow: auto; }
 
       #jsonp-url { width: 50%; }
 
@@ -76,9 +79,8 @@
     </div>
 
     <div id="json-path" class="show-off">
-      <h2>JSONPath demo</h2>
-      <p>JSONPath is to JSON what Xpath is to XML.  "A tool for picking parts out of a JSON structure".</p>
-      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library to demo one possible use for ORU.js.</p>
+      <h2>JSONPath</h2>
+      <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page use's Goessner's library.</p>
       <input id="json-path-input" value="$.gupd.occupants"/>
       <input type="button" id="json-path-go" value="json path"/>
       <div id="json-path-result" class="orimashita"></div>
@@ -108,17 +110,18 @@
             console.log(err);
             alert("error ;(");
         }
+        doJsonPath();
+      };
+
+      var doJsonPath = function(){
+          var res = document.getElementById('json-path-result');
+          res.innerHTML = "";
+          res.appendChild( ORU.create( jsonPath( JSON.parse(document.getElementById("demo-json").value),                                                              document.getElementById('json-path-input').value)));
       };
 
       document.getElementById('jsonp-fetch').onclick = fetchJson;
       document.getElementById('orinasai').onclick = doOru;
-
-      document.getElementById('json-path-go').onclick = function(e) {
-          var res = document.getElementById('json-path-result');
-          res.innerHTML = "";
-          res.appendChild( ORU.create( jsonPath( JSON.parse(document.getElementById("demo-json").value),                                                              document.getElementById('json-path-input').value)));
-
-      };
+      document.getElementById('json-path-go').onclick = doJsonPath;
 
       doOru();
     </script>
