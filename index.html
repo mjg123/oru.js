@@ -3,7 +3,8 @@
   <head>
     <title>ORU.js</title>
     <style type="text/css">
-      textarea { width: 90%; margin-left: 32px; display: block; height: 100px; border: 1px solid #CCC;}
+      textarea { width: 90%; display: block; height: 100px; border: 1px solid #CCC;}
+      .indent { margin-left: 32px; }
 
       .jsonp-input { border: 1px solid #CCC; }
 
@@ -51,14 +52,14 @@
 
     <h1>ORU.js</h1>
 
-    <p>
+    <p class="indent">
     First, type some JSON or fetch from URL
     <input id="jsonp-url" class="jsonp-input" value="http://api.stackoverflow.com/1.0/users/268619/?jsonp=oru_cb"/>
     using jsonp.
     <input type="button" id="jsonp-fetch" value="fetch"/>
     </p>
 
-    <textarea id="demo-json">
+    <textarea id="demo-json" class="indent">
 {
   "key": "value", "foo": 123, "key2": [ "an", "array", null ],
   "gupd": { "type": "awesome", "occupants": ["kwaazi","peso"], "breath": [true, false] } 
