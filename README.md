@@ -16,4 +16,4 @@ You need to include oru.js on your page.  Now there is a new global called `ORU`
     document.body.appendChild( e );
 ```
 
-...and you're done.
+`create` takes an optional second argument, a number which sets the level at which arrays and objects are folded.  This is useful if your object is large.  The default value is 4.
