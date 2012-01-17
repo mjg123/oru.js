@@ -59,8 +59,8 @@ var ORU = (function(){
 	var span = el('span', 'oru-value-string'), a;
 	span.appendChild( el('span', 'oru-key-quote', '"') );
 
-	if ( txt.slice(0,7) === "http://" ) {
-	    a = el('a');
+	if ( /^(https?:\/\/[\S]+)$/.test(txt) ) {
+	    a = el('a', 'oru-value-string');
 	    a.href = txt;
 	    a.innerHTML = txt;
 	    span.appendChild(a);
