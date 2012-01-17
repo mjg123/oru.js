@@ -87,7 +87,7 @@ var ORU = (function(){
 	return el('span', 'oru-value-undefined', 'undefined');
     };
 
-    generators.array = function( arr ){
+    generators.array = function( arr, depth ){
 	var i, contentLine, bracketS, bracketE, foldfn, isFolded=false,
 	valDiv = el('div', 'oru-value'),
 	brax = el('span'),
@@ -95,7 +95,7 @@ var ORU = (function(){
 	folded = el('span', 'oru-bracket-folded oru-finger', "~~~" + arr.length + " item" + (arr.length>1?"s":"") +  "~~~");
 	
 	for (i=0; i<arr.length; i+=1){
-	    contentLine = oru.create(arr[i]);
+	    contentLine = oru.create(arr[i], depth);
 	    contentLine.className += " oru-property";
 	    if ( i<arr.length-1 ){
 		contentLine.appendChild( el('span', 'oru-comma', ',') );
@@ -123,17 +123,21 @@ var ORU = (function(){
 		brax.appendChild(folded);
 	    }
 	    isFolded = !isFolded;
-	}
+	};
 
 	bracketS.onclick = foldfn;
 	folded.onclick = foldfn;
 	bracketE.onclick = foldfn;
 
+	if (depth <= 0){
+	    foldfn();
+	}
+
 	return valDiv;
     };
 
-    generators.object = function( obj ){
-	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0, isFolded=false,
+    generators.object = function( obj, depth ){
+	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0, isFolded=false, foldfn,
 	brax = el('span'),
 	cp = countProps(obj),
 	folded = el('span', 'oru-bracket-folded oru-finger', "~~~" + cp + " propert" + (cp>1?"ies":"y") +  "~~~"),
@@ -146,7 +150,7 @@ var ORU = (function(){
 	    if ( obj.hasOwnProperty(p) ){
 		mapKeyDiv = quotedKey(p);
 		mapValDiv = el('div', 'oru-value');
-		mapValDiv.appendChild(oru.create(obj[p]));
+		mapValDiv.appendChild(oru.create(obj[p], depth));
 		
 		mapPropDiv = el('div', 'oru-property');
 		mapPropDiv.appendChild(mapKeyDiv);
@@ -182,19 +186,24 @@ var ORU = (function(){
 		brax.appendChild(folded);
 	    }
 	    isFolded = !isFolded;
-	}
+	};
 
 	bracketS.onclick = foldfn;
 	folded.onclick = foldfn;
 	bracketE.onclick = foldfn;
 
+	if ( depth <= 0 ){
+	    foldfn();
+	}
+
 	return valDiv;
     };
 
-    oru.create = function( obj ){
+    oru.create = function( obj, depth ){
+	depth = (typeof depth === "number" ? depth : 3);
 	var type = typeOf(obj);
 	if ( generators[type] ){
-	    return generators[type]( obj );
+	    return generators[type]( obj, depth-1 );
 	}
 	throw "No Generator for type " + type;
     };
