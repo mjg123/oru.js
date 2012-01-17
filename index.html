@@ -29,6 +29,8 @@
       .oru-key { display: inline-block; margin-right: 8px; }
       .oru-value { display: inline; }
       .oru-bracket-content { padding-left: 24px; }
+      .oru-bracket-folded { color: #888; }
+      .oru-finger { cursor: pointer; }
 
       .oru-key-text { font-weight: bold; }
       .oru-key-quote { color: #888; }
@@ -82,7 +84,7 @@
     <div id="json-path" class="show-off">
       <h2>JSONPath</h2>
       <p><a href="http://goessner.net/articles/JsonPath/">(reference)</a> - This page uses Goessner's library.</p>
-      <input id="json-path-input" value="$.gupd.occupants"/>
+      <input id="json-path-input" value="$.gupd.occupants[?(@.length > 4)]"/>
       <input type="button" id="json-path-go" value="json path"/>
       <div id="json-path-result" class="orimashita"></div>
     </div>

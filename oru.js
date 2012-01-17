@@ -60,9 +60,8 @@ var ORU = (function(){
 	span.appendChild( el('span', 'oru-key-quote', '"') );
 
 	if ( /^(https?:\/\/[\S]+)$/.test(txt) ) {
-	    a = el('a', 'oru-value-string');
+	    a = el('a', 'oru-value-string', txt);
 	    a.href = txt;
-	    a.innerHTML = txt;
 	    span.appendChild(a);
 	} else {
 	    span.appendChild(el('span', '', txt));
@@ -73,34 +72,28 @@ var ORU = (function(){
     };
 
     generators.number = function( num ){
-	var span = el('span', 'oru-value-number');
-	span.innerHTML = num;
-	return span;
+	return el('span', 'oru-value-number', num.toString() );
     };
 
     generators.boolean = function( b ){
-	var span = el('span', 'oru-value-boolean');
-	span.innerHTML = b;
-	return span;
+	return el('span', 'oru-value-boolean', b.toString() );
     };
 
     generators["null"] = function(){
-	var span = el('span', 'oru-value-null');
-	span.innerHTML = "null";
-	return span;
+	return el('span', 'oru-value-null', 'null');
     };
 
     generators["undefined"] = function(){
-	var span = el('span', 'oru-value-undefined');
-	span.innerHTML = "undefined";
-	return span;
+	return el('span', 'oru-value-undefined', 'undefined');
     };
 
     generators.array = function( arr ){
-	var i, contentLine, bracketS, bracketE,
+	var i, contentLine, bracketS, bracketE, foldfn, isFolded=false,
 	valDiv = el('div', 'oru-value'),
-	content = el('div', 'oru-bracket-content');
-
+	brax = el('span'),
+	content = el('div', 'oru-bracket-content'),
+	folded = el('span', 'oru-bracket-folded oru-finger', "~~~" + arr.length + " item" + (arr.length>1?"s":"") +  "~~~");
+	
 	for (i=0; i<arr.length; i+=1){
 	    contentLine = oru.create(arr[i]);
 	    contentLine.className += " oru-property";
@@ -110,20 +103,40 @@ var ORU = (function(){
 	    content.appendChild( contentLine );
 	}
 
-	bracketS = el('span', 'oru-bracket', '[');
-	bracketE = el('span', 'oru-bracket', ']');
-
+	bracketS = el('span', 'oru-bracket oru-finger', '[');
+	bracketE = el('span', 'oru-bracket oru-finger', ']');
+	
 	valDiv.appendChild( bracketS );
-	valDiv.appendChild(content);
+	brax.appendChild( content );
+	valDiv.appendChild( brax );
 	valDiv.appendChild( bracketE );
 
 	addDimmer(bracketS, content);
 	addDimmer(bracketE, content);
+
+	foldfn = function(){
+	    if ( isFolded ){
+		brax.removeChild(folded);
+		brax.appendChild(content);
+	    } else {
+		brax.removeChild(content);
+		brax.appendChild(folded);
+	    }
+	    isFolded = !isFolded;
+	}
+
+	bracketS.onclick = foldfn;
+	folded.onclick = foldfn;
+	bracketE.onclick = foldfn;
+
 	return valDiv;
     };
 
     generators.object = function( obj ){
-	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0,
+	var p, mapPropDiv, mapKeyDiv, mapValDiv, i=0, isFolded=false,
+	brax = el('span'),
+	cp = countProps(obj),
+	folded = el('span', 'oru-bracket-folded oru-finger', "~~~" + cp + " propert" + (cp>1?"ies":"y") +  "~~~"),
 	bracketS, bracketE,
 	propCount = countProps( obj ),
 	valDiv = el('div', 'oru-value'),
@@ -149,15 +162,31 @@ var ORU = (function(){
 	    }
 	}
 
-	bracketS = el('span', 'oru-bracket', '{');
-	bracketE = el('span', 'oru-bracket', '}');
+	bracketS = el('span', 'oru-bracket oru-finger', '{');
+	bracketE = el('span', 'oru-bracket oru-finger', '}');
 
 	valDiv.appendChild( bracketS );
-	valDiv.appendChild(content);
+	brax.appendChild(content);
+	valDiv.appendChild(brax);
 	valDiv.appendChild( bracketE );
 
 	addDimmer(bracketS, content);
 	addDimmer(bracketE, content);
+
+	foldfn = function(){
+	    if ( isFolded ){
+		brax.removeChild(folded);
+		brax.appendChild(content);
+	    } else {
+		brax.removeChild(content);
+		brax.appendChild(folded);
+	    }
+	    isFolded = !isFolded;
+	}
+
+	bracketS.onclick = foldfn;
+	folded.onclick = foldfn;
+	bracketE.onclick = foldfn;
 
 	return valDiv;
     };
