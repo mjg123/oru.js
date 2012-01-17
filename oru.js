@@ -51,13 +51,24 @@ var ORU = (function(){
     },
 
     addDimmer = function( src, dst ){
-	src.onmouseover = function(){ dst.classList.add( 'oru-highlight' ) };
-	src.onmouseout  = function(){ dst.classList.remove( 'oru-highlight' ) };
+	src.onmouseover = function(){ dst.classList.add( 'oru-highlight' ); };
+	src.onmouseout  = function(){ dst.classList.remove( 'oru-highlight' ); };
     };
 
     generators.string = function( txt ){
-	var span = el('span', 'oru-value-string');
-	span.innerHTML = '"' + txt + '"';
+	var span = el('span', 'oru-value-string'), a;
+	span.appendChild( el('span', 'oru-key-quote', '"') );
+
+	if ( /^(https?:\/\/[\S]+)$/.test(txt) ) {
+	    a = el('a', 'oru-value-string');
+	    a.href = txt;
+	    a.innerHTML = txt;
+	    span.appendChild(a);
+	} else {
+	    span.appendChild(el('span', '', txt));
+	}
+
+	span.appendChild( el('span', 'oru-key-quote', '"') );
 	return span;
     };
 
